@@ -15,7 +15,7 @@ def show_add_recipe_screen(parent_frame, language):
         bg=parent_frame.cget("bg"), 
         font=("Helvetica", 16, "bold")
     )
-    title_label.grid(row=0, column=0, columnspan=3, pady=10)
+    title_label.grid(row=0, column=0, columnspan=3, pady=10, sticky="w")
 
     recipe_frame = tk.Frame(parent_frame, bg=parent_frame.cget("bg"), relief=tk.RAISED, bd=1)
     recipe_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
@@ -61,21 +61,54 @@ def show_add_recipe_screen(parent_frame, language):
 
     portion_var = tk.IntVar(value=1)
     portion_spin = tk.Spinbox(recipe_frame, from_=0, to=100, increment=1, textvariable=portion_var, width=5)
-    portion_spin.grid(row=7, column=0, padx=10, pady=5)
+    portion_spin.grid(row=7, column=0, sticky="w", padx=10, pady=5)
+
+
+
+    # ------------------------------------------------
+    # Cooking Time
+    # ------------------------------------------------
 
     cooking_time_label = tk.Label(recipe_frame, text=texts[current_lang]["cooking_time_label"], bg=recipe_frame.cget("bg"))
     cooking_time_label.grid(row=8, column=0, sticky="w", padx=10, pady=5)
 
-    cooking_var = tk.IntVar(value=1)
-    cooking_spin = tk.Spinbox(recipe_frame, from_=0, to=100, increment=1, textvariable=cooking_var, width=5)
-    cooking_spin.grid(row=9, column=0, padx=10, pady=5)
+    time_input_frame = tk.Frame(recipe_frame, bg=recipe_frame.cget("bg"))
+    time_input_frame.grid(row=9, column=0, sticky="w", padx=10, pady=5)
+
+    cooking_hours_var = tk.IntVar(value=0) 
+    cooking_hours_spin = tk.Spinbox(
+        time_input_frame, 
+        from_=0, 
+        to=24, 
+        increment=1, 
+        textvariable=cooking_hours_var, 
+        width=3, 
+        wrap=True 
+    )
+    cooking_hours_spin.pack(side=tk.LEFT, padx=(0, 2))
+
+    separator_label = tk.Label(time_input_frame, text=":", bg=recipe_frame.cget("bg"), font=("Arial", 10, "bold"))
+    separator_label.pack(side=tk.LEFT)
+
+    cooking_minutes_var = tk.IntVar(value=30) 
+    cooking_minutes_spin = tk.Spinbox(
+        time_input_frame, 
+        from_=0, 
+        to=59, 
+        increment=5, 
+        textvariable=cooking_minutes_var, 
+        width=3, 
+        wrap=True
+    )
+    cooking_minutes_spin.pack(side=tk.LEFT, padx=(2, 0))
+    #-------
     
     ingredients_frame = tk.Frame(parent_frame, bg=parent_frame.cget("bg"), relief=tk.RAISED, bd=1) 
     ingredients_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
     ingredients_label = tk.Label(ingredients_frame, text=texts[current_lang]["ingredients_label"], bg=ingredients_frame.cget("bg")) 
     ingredients_label.grid(row=0, column=0, sticky="w", padx=10, pady=5) 
     ingredients_text = tk.Text(ingredients_frame, width=40, height=20) 
-    ingredients_text.grid(row=1, column=0, sticky="nsew", padx=10, pady=5)
+    ingredients_text.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
     direction_frame = tk.Frame(parent_frame, bg=parent_frame.cget("bg"), relief=tk.RAISED, bd=1)
     direction_frame.grid(row=1, column=2, sticky="nsew", padx=5, pady=5)
@@ -83,7 +116,8 @@ def show_add_recipe_screen(parent_frame, language):
     directions_label = tk.Label(direction_frame, text=texts[current_lang]["directions_label"], bg=direction_frame.cget("bg"))
     directions_label.grid(row=0, column=0, sticky="w", padx=10, pady=5)
     directions_text = tk.Text(direction_frame, width=40, height=20)
-    directions_text.grid(row=1, column=0, sticky="nsew", padx=10, pady=5)
+    directions_text.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+
 
     def save_recipe():
         name = name_entry.get()
@@ -91,7 +125,11 @@ def show_add_recipe_screen(parent_frame, language):
         category = selectedCategory.get()
         collection = selectedCollection.get()
         portion = portion_var.get()
-        cooking_time = cooking_var.get()
+        #--
+        hours = cooking_hours_var.get()
+        minutes = cooking_minutes_var.get()
+        cooking_time = (hours * 60) + minutes
+        #---
         ingredients = ingredients_text.get("1.0", "end-1c")
         ingredients_text.delete("1.0", "end")  
         directions = directions_text.get("1.0", "end-1c")
@@ -120,4 +158,4 @@ def show_add_recipe_screen(parent_frame, language):
     parent_frame.grid_rowconfigure(1, weight=1)
 
     save_button = ttk.Button(parent_frame, text=texts[current_lang]["save_button"], command=save_recipe)
-    save_button.grid(row=2, column=0, columnspan=3, pady=10)
+    save_button.grid(row=2, column=2, columnspan=5, sticky="e", padx=(0, 10), pady=10)

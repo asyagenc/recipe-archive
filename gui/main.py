@@ -6,7 +6,7 @@ import add_recipe
 import manage_recipes
 import settings
 
-current_lang = "en"  
+current_lang = settings.get_lang()
 
 root = tk.Tk()
 root.title("Recipe Keeper")
@@ -38,7 +38,6 @@ def menu_click(button_text):
 
     elif (button_text == "Settings"):
         settings.show_settings(main_content_frame, current_lang)
-    
     
    
 

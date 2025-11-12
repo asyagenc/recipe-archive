@@ -10,7 +10,7 @@ save_button = None
 def show_settings(parent_frame, language):
     global language_var, language_label, save_button, lang
 
-    lang = language  # Başlangıç dili
+    lang = language  
 
     language_label = tk.Label(parent_frame, text=texts[lang]["language_label"])
     language_label.pack(pady=10)

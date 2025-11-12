@@ -17,7 +17,7 @@ def recipe_list(frame, recipes, language):
     delete_icon = texts[current_lang]["delete_icon"]
 
     for i, recipe in enumerate(recipes):
-        row_frame = tk.Frame(frame, bg=list_bg_color, relief="flat")
+        row_frame = tk.Frame(frame, bg=list_bg_color, relief="groove", bd=1)
         row_frame.pack(fill="x", ipady=5)
 
         recipe_label = tk.Label(
@@ -52,9 +52,17 @@ def recipe_list(frame, recipes, language):
 def show_manage_recipe_screen(parent_frame, language):
     current_lang = language
 
+    title_label = tk.Label(
+        parent_frame, 
+         text=texts[current_lang]["manage_recipes_title"], 
+        bg=parent_frame.cget("bg"), 
+        font=("Helvetica", 16, "bold")
+    )
+    title_label.pack(anchor="w")
+    
     categories = database.get_recipe_category()
     categories.extend([
-        "Barbecue","Beef","Bread","Cake","Casserole","Chicken",
+        "","Barbecue","Beef","Bread","Cake","Casserole","Chicken",
         "Chocolate","Cookie","Egg","Fish","Lamb","Muffin",
         "Noodle","Pasta","Pie","Pork","Rice","Salad",
         "Sandwich","Sauce","Soup","Tart","Vegetable","Vegetarian"

@@ -25,6 +25,7 @@ texts = {
         "saved_message_title": "Saved",
         "saved_message_text": "Recipe Saved Successfully!",
         #----
+        "manage_recipes_title": "Your Recipes",
         "category_label": "Category:",
         "edit_icon": "✏️",
         "delete_icon": "🗑",
@@ -56,9 +57,10 @@ texts = {
         "saved_message_title": "Kaydedildi",
         "saved_message_text": "Tarif Başarıyla Kaydedildi!",
         #---
+        "manage_recipes_title": "Tarifleriniz",
         "category_label": "Kategori:",
-        "edit_icon": "✏️",
-        "delete_icon": "🗑",
+        "edit_icon": "✎𓂃",
+        "delete_icon": "🗑️",
         #--
         "language_label": "Dil",
         "save_btn": "Kaydet"
