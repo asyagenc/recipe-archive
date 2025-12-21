@@ -1,103 +1,125 @@
-import tkinter as tk
-from tkinter import ttk
+import customtkinter as ctk
 
 import edit_recipe
 import recipe_detail
 import database
-from texts import texts  
+from texts import texts
 
-def recipe_list(frame, recipes, language):
-    current_lang = language
 
-    for widget in frame.winfo_children():
+def recipe_list(list_frame, recipes, parent_frame, language):
+    lang = language
+
+    for widget in list_frame.winfo_children():
         widget.destroy()
 
-    list_bg_color = "#FFFFFF" 
-    edit_icon = texts[current_lang]["edit_icon"]
-    delete_icon = texts[current_lang]["delete_icon"]
+    edit_icon = texts[lang]["edit_icon"]
+    delete_icon = texts[lang]["delete_icon"]
 
-    for i, recipe in enumerate(recipes):
-        row_frame = tk.Frame(frame, bg=list_bg_color, relief="groove", bd=1)
-        row_frame.pack(fill="x", ipady=5)
+    for recipe in recipes:
+        row = ctk.CTkFrame(list_frame, height=48)
+        row.pack(fill="x", pady=6)
+        row.pack_propagate(False)
 
-        recipe_label = tk.Label(
-            row_frame, text=recipe, anchor="w", 
-            bd=0, relief="flat", bg=list_bg_color, fg="#000000",
-            font=('Helvetica', 14)
-        )
-        recipe_label.bind("<Button-1>", lambda event, r=recipe: menu_click(r, frame))
-        recipe_label.pack(side="left", padx=10, fill="x", expand=True)
+        # Recipe name (clickable → DETAIL)
+        ctk.CTkButton(
+            row,
+            text=recipe,
+            anchor="w",
+            fg_color="transparent",
+            hover_color="#e8e8e8",
+            text_color=("black", "white"),
+            command=lambda r=recipe:
+                recipe_detail.show_recipe_screen(parent_frame, r, lang)
+        ).pack(side="left", fill="x", expand=True, padx=(15, 5))
 
-        edit_btn = tk.Button(
-            row_frame, text=edit_icon, width=3,
-            bd=0, relief="flat", bg=list_bg_color, fg="#007AFF", 
-            font=('Helvetica', 10),
-            command=lambda r=recipe: edit_bttn(r, frame)
-        )
-        edit_btn.pack(side="right", padx=(5, 1)) 
-        
-        delete_btn = tk.Button(
-            row_frame, text=delete_icon, width=3,
-            bd=0, relief="flat", bg=list_bg_color, fg="#FF3B30", 
-            font=('Helvetica', 10),
-            command=lambda r=recipe: delete_bttn(r, frame)
-        )
-        delete_btn.pack(side="right", padx=(1, 10)) 
-        
-        if i < len(recipes) - 1:
-            separator = tk.Frame(frame, height=1, bg="#D1D1D6")
-            separator.pack(fill="x", padx=10)
+        # Edit
+        ctk.CTkButton(
+            row,
+            text=edit_icon,
+            width=32,
+            fg_color="transparent",
+            hover_color="#e0e0e0",
+            command=lambda r=recipe:
+                edit_recipe.show_edit_recipe_screen(parent_frame, r, lang)
+        ).pack(side="right", padx=(0, 5))
+
+        # Delete
+        ctk.CTkButton(
+            row,
+            text=delete_icon,
+            width=32,
+            fg_color="transparent",
+            hover_color="#f8d7da",
+            text_color="#dc3545",
+            command=lambda r=recipe:
+                delete_recipe(r, parent_frame, list_frame, lang)
+        ).pack(side="right", padx=(0, 10))
+
+
+def delete_recipe(recipe_name, parent_frame, list_frame, language):
+    database.delete_recipe(recipe_name)
+    recipes = database.get_recipe_names()
+    recipe_list(list_frame, recipes, parent_frame, language)
+
+
+def apply_filter(list_frame, category, parent_frame, language):
+    if category:
+        recipes = database.categoryFilter(category)
+    else:
+        recipes = database.get_recipe_names()
+
+    recipe_list(list_frame, recipes, parent_frame, language)
 
 
 def show_manage_recipe_screen(parent_frame, language):
-    current_lang = language
+    lang = language
 
-    title_label = tk.Label(
-        parent_frame, 
-         text=texts[current_lang]["manage_recipes_title"], 
-        bg=parent_frame.cget("bg"), 
-        font=("Helvetica", 16, "bold")
+    # 🔴 EN ÖNEMLİ SATIR
+    for widget in parent_frame.winfo_children():
+        widget.destroy()
+
+    container = ctk.CTkFrame(parent_frame)
+    container.pack(fill="both", expand=True, padx=30, pady=30)
+
+    # Header
+    ctk.CTkLabel(
+        container,
+        text=texts[lang]["manage_recipes_title"],
+        font=ctk.CTkFont(size=22, weight="bold")
+    ).pack(anchor="w", pady=(0, 20))
+
+    # Category filter
+    categories = list(set(
+        database.get_recipe_category() + [
+            "", "Barbecue","Beef","Bread","Cake","Casserole","Chicken",
+            "Chocolate","Cookie","Egg","Fish","Lamb","Muffin",
+            "Noodle","Pasta","Pie","Pork","Rice","Salad",
+            "Sandwich","Sauce","Soup","Tart","Vegetable","Vegetarian"
+        ]
+    ))
+
+    ctk.CTkLabel(
+        container,
+        text=texts[lang]["category_label"]
+    ).pack(anchor="w")
+
+    selected_category = ctk.StringVar(value="")
+    category_combo = ctk.CTkComboBox(
+        container,
+        values=categories,
+        variable=selected_category,
+        width=220
     )
-    title_label.pack(anchor="w")
-    
-    categories = database.get_recipe_category()
-    categories.extend([
-        "","Barbecue","Beef","Bread","Cake","Casserole","Chicken",
-        "Chocolate","Cookie","Egg","Fish","Lamb","Muffin",
-        "Noodle","Pasta","Pie","Pork","Rice","Salad",
-        "Sandwich","Sauce","Soup","Tart","Vegetable","Vegetarian"
-    ])
-    categories = list(set(categories))
+    category_combo.pack(anchor="w", pady=(5, 20))
 
-    category_label = tk.Label(parent_frame, text=texts[current_lang]["category_label"], bg=parent_frame.cget("bg"))
-    category_label.pack(padx=10, pady=(10,0), anchor="w")
+    # Scrollable list
+    list_frame = ctk.CTkScrollableFrame(container)
+    list_frame.pack(fill="both", expand=True)
 
-    selected = tk.StringVar()
-    combo = ttk.Combobox(parent_frame, textvariable=selected, values=categories)
-    combo.current(0)
-    combo.pack(padx=10, pady=5, anchor="w")
-
-    list_frame = tk.Frame(parent_frame)
-    list_frame.pack(side="left", fill="both", expand=True, padx=10, pady=10)
-
-    combo.bind("<<ComboboxSelected>>", lambda event: apply_filter(list_frame, selected.get(), current_lang))
+    category_combo.configure(
+        command=lambda value:
+            apply_filter(list_frame, value, parent_frame, lang)
+    )
 
     recipes = database.get_recipe_names()
-    recipe_list(list_frame, recipes, current_lang)
-
-
-def menu_click(item_name, frame):
-    recipe_detail.show_recipe_screen(frame, item_name)
-
-def edit_bttn(item_name, frame):
-    edit_recipe.show_edit_recipe_screen(frame, item_name)
-
-def delete_bttn(item_name, frame, language="en"):
-    database.delete_recipe(item_name)
-    recipes = database.get_recipe_names()
-    recipe_list(frame, recipes, language)
-
-def apply_filter(frame, category, language="en"):
-    if category != "":
-        recipes = database.categoryFilter(category)
-        recipe_list(frame, recipes, language)
+    recipe_list(list_frame, recipes, parent_frame, lang)

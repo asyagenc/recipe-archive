@@ -93,6 +93,8 @@ def delete_recipe(name):
     cursor.execute("DELETE FROM Recipes WHERE name = ?", (name,))
     conn.commit()
     conn.close()
+    
+    
 
 
 def categoryFilter(categoryName):
@@ -102,6 +104,52 @@ def categoryFilter(categoryName):
     recipes = cursor.fetchall()
     conn.close()
     return [r[0] for r in recipes]
+
+def get_total_recipe_count():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM Recipes")
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count
+
+
+def get_latest_recipes(limit=5):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT name 
+        FROM Recipes
+        ORDER BY rowid DESC
+        LIMIT ?
+    """, (limit,))
+    recipes = cursor.fetchall()
+    conn.close()
+    return [r[0] for r in recipes]
+
+def get_recipe_by_name(name):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT name, category, collection, ingredients, instructions, cooking_time, portion, notes
+        FROM Recipes
+        WHERE name = ?
+    """, (name,))
+    recipe = cursor.fetchone()
+    conn.close()
+    return recipe
+
+def update_recipe(old_name, name, category, collection, ingredients, instructions, cooking_time, portion, notes=""):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE Recipes
+        SET name = ?, category = ?, collection = ?, ingredients = ?, instructions = ?, cooking_time = ?, portion = ?, notes = ?
+        WHERE name = ?
+    """, (name, category, collection, ingredients, instructions, cooking_time, portion, notes, old_name))
+    conn.commit()
+    conn.close()
+
 
 
 if __name__ == '__main__':
