@@ -32,6 +32,28 @@ The project is built with a modular structure:
 - Theme Support: Toggle between Dark and Light modes with a single click.  
 - Modern GUI: Optimized user-friendly experience with CustomTkinter.
 
+## Screens
+
+**Dashboard**  
+![Dashboard](recipe-archive/assets/image/dashboard.png)
+
+**Adding a New Recipe**  
+![Add Recipe](recipe-archive/assets/image/add%20recipe.png)
+
+**Editing a Recipe**  
+![Edit Recipe](recipe-archive/assets/image/edit%20recipe.png)
+
+**Manage Recipes**  
+![Manage Recipes](recipe-archive/assets/image/manage%20recipe.png)
+
+**Dual Language Settings**  
+![Dual Language Settings](recipe-archive/assets/image/dual%20lang%20settings.png)
+
+**Dark Mode**  
+![Dark Mode](recipe-archive/assets/image/dark%20mode.png)
+
+
+
 ## Installation & Running
 
 1. **Install Dependencies**: The app requires `customtkinter` to run:
@@ -54,6 +76,7 @@ python main.py
 | Language       | Python 3.x               |
 | Developer      | Asya Genç & Elif Oskanbaş|
 | Version        | 1.0.0                    |
+
 
 
 
