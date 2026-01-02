@@ -161,18 +161,19 @@ def get_total_recipe_count():
     return count
 
 
-def get_latest_recipes(limit=5):
+def get_latest_recipes():
+    """Tüm tarifleri en yeniden en eskiye doğru sıralar"""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
         SELECT name 
         FROM Recipes
         ORDER BY rowid DESC
-        LIMIT ?
-    """, (limit,))
+    """)
     recipes = cursor.fetchall()
     conn.close()
     return [r[0] for r in recipes]
+  
 
 def get_recipe_by_name(name):
     conn = get_db_connection()
