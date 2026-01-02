@@ -24,18 +24,18 @@ def show_dashboard(parent_frame, language):
     for widget in parent_frame.winfo_children():
         widget.destroy()
     
-    # Ana container (sabit)
+    # Main container
     container = ctk.CTkFrame(parent_frame, fg_color="transparent")
     container.pack(fill="both", expand=True, padx=30, pady=30)
     
-    # Header (sabit)
+    # Header 
     ctk.CTkLabel(
         container,
         text=texts[lang]["dashboard_greeting"],
         font=ctk.CTkFont(size=24, weight="bold")
     ).pack(anchor="w", pady=(0, 30))
     
-    # Stats row (sabit)
+    # Stats row 
     stats_row = ctk.CTkFrame(container, fg_color="transparent")
     stats_row.pack(fill="x", pady=(0, 30))
     
@@ -53,21 +53,21 @@ def show_dashboard(parent_frame, language):
         category_count
     ).pack(side="left", padx=10)
     
-    # Recent Recipes Section Header (sabit)
+    # Recent Recipes Section Header 
     ctk.CTkLabel(
         container,
         text=texts[lang]["recently_added"],
         font=ctk.CTkFont(size=18, weight="bold")
     ).pack(anchor="w", pady=(0, 10))
     
-    # Scrollable frame sadece tarifler için
+    # Scrollable frame 
     scrollable_frame = ctk.CTkScrollableFrame(
         container,
         fg_color="transparent"
     )
     scrollable_frame.pack(fill="both", expand=True)
     
-    # Tüm tarifleri göster
+    
     all_recipes = database.get_latest_recipes()
     
     if all_recipes:
